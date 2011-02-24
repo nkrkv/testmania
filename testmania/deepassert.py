@@ -21,7 +21,7 @@ def assert_deep_equal(obj1, obj2, message=None, partial_dict_match=False):
 
 def _format(obj):
     # simplify to make sure it is pretty printed
-    return pprint.pformat(_simplify(obj1))
+    return pprint.pformat(_simplify(obj))
 
 
 def _simplify(x):

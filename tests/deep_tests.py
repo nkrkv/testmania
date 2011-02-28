@@ -6,7 +6,7 @@ except ImportError:
     from unittest import TestCase
 
 from nose.tools import assert_equal
-from testmania.deepassert import assert_deep_equal
+from testmania.deep import assert_deep_equal
 
 
 class TestDeepAssert(TestCase):

@@ -46,4 +46,58 @@ class TestXmlAssert(TestCase):
         with self.assertRaises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn("at /root/[1] expected <bar> element, got nothing", str(e.exception))
+        self.assertIn("at /root expected <bar> element, got nothing", str(e.exception))
+
+    def test_lack_of_element(self):
+        xml1 = """
+        <root>
+            <foo/>
+            <bar/>
+        </root>
+        """.strip()
+
+        xml2 = """
+        <root>
+            <foo/>
+        </root>
+        """.strip()
+
+        with self.assertRaises(AssertionError) as e:
+            assert_xml_equal(xml1, xml2)
+
+        self.assertIn("at /root expected nothing, got <bar> element", str(e.exception))
+
+    def test_text(self):
+        xml1 = """
+        <root>
+            <foo>
+                Hello
+            </foo>
+        </root>
+        """.strip()
+
+        xml2 = """
+        <root>
+            <foo>Hello</foo>
+        </root>
+        """.strip()
+
+        assert_xml_equal(xml1, xml2)
+
+    def test_text_inequal(self):
+        xml1 = """
+        <root>
+            <foo>Hello</foo>
+        </root>
+        """.strip()
+
+        xml2 = """
+        <root>
+            <foo>Privet</foo>
+        </root>
+        """.strip()
+
+        with self.assertRaises(AssertionError) as e:
+            assert_xml_equal(xml1, xml2)
+
+        self.assertIn("at /root/foo expected u'Privet', got u'Hello'", str(e.exception))

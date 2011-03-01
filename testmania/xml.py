@@ -7,7 +7,7 @@ from itertools import izip_longest
 import xml.dom.minidom
 
 
-def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True):
+def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True, ignore_extra_elements=False):
     actual = xml.dom.minidom.parseString(actual)
     expected = xml.dom.minidom.parseString(expected)
 
@@ -16,7 +16,8 @@ def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True):
         _strip_whitespace(expected)
 
     try:
-        _assert_node_equal(actual.documentElement, expected.documentElement)
+        _assert_node_equal(actual.documentElement, expected.documentElement,
+                           ignore_extra_elements=ignore_extra_elements)
     except AssertionError, e:
         if not msg:
             msg = "\nExpected:\n%s\n\nActual:\n%s\n%s" % \
@@ -24,7 +25,7 @@ def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True):
         raise AssertionError(msg)
 
 
-def _assert_node_equal(actual, expected):
+def _assert_node_equal(actual, expected, ignore_extra_elements):
     if actual is None or expected is None or actual.nodeType != expected.nodeType:
         msg = "at %s expected %s, got %s" % \
                 (_format_node_path((actual or expected).parentNode), _format_node(expected), _format_node(actual))
@@ -45,10 +46,21 @@ def _assert_node_equal(actual, expected):
                     (_format_node_path(actual.parentNode), expected.tagName, actual.tagName)
             raise AssertionError(msg)
 
-        elem_pairs = izip_longest(actual.childNodes, expected.childNodes)
+        actual_child = actual.firstChild
+        expected_child = expected.firstChild
 
-        for i, (actual_e, expected_e) in enumerate(elem_pairs):
-            _assert_node_equal(actual_e, expected_e)
+        expected_child_tags = [
+            n.tagName for n in expected.childNodes
+            if n.nodeType == xml.dom.Node.ELEMENT_NODE]
+
+        while actual_child or expected_child:
+            if ignore_extra_elements and actual_child and actual_child.nodeType == xml.dom.Node.ELEMENT_NODE \
+               and actual_child.tagName not in expected_child_tags:
+                actual_child = actual_child.nextSibling
+                continue
+            _assert_node_equal(actual_child, expected_child, ignore_extra_elements)
+            actual_child = actual_child.nextSibling
+            expected_child = expected_child.nextSibling
     else:
         raise NotImplementedError("Comparison of %s nodes is not implemented" % node_type)
 

@@ -100,7 +100,7 @@ class TestXmlAssert(TestCase):
         with self.assertRaises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn("at /root/foo expected u'Privet', got u'Hello'", str(e.exception))
+        self.assertIn('at /root/foo expected "Privet", got "Hello"', str(e.exception))
 
     def test_ignore_extra_elements(self):
         xml1 = """

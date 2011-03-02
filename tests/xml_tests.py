@@ -119,3 +119,21 @@ class TestXmlAssert(TestCase):
         assert_xml_equal(xml1, xml2, ignore_extra_elements=True)
         with self.assertRaises(AssertionError) as e:
             assert_xml_equal(xml2, xml1, ignore_extra_elements=True)
+
+    def test_ignore_element_order(self):
+        xml1 = """
+        <root>
+            <foo/>
+            <bar/>
+        </root>
+        """.strip()
+
+        xml2 = """
+        <root>
+            <bar/>
+            <foo/>
+        </root>
+        """.strip()
+
+        assert_xml_equal(xml1, xml2, ignore_element_order=True)
+        assert_xml_equal(xml2, xml1, ignore_element_order=True)

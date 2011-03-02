@@ -7,7 +7,11 @@ from itertools import izip_longest
 import xml.dom.minidom
 
 
-def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True, ignore_extra_elements=False):
+def assert_xml_equal(actual, expected, msg=None, 
+                     ignore_whitespace=True, 
+                     ignore_extra_elements=False,
+                     ignore_element_order=False):
+
     actual = xml.dom.minidom.parseString(actual)
     expected = xml.dom.minidom.parseString(expected)
 
@@ -17,6 +21,7 @@ def assert_xml_equal(actual, expected, msg=None, ignore_whitespace=True, ignore_
 
     settings = Settings()
     settings.ignore_extra_elements = ignore_extra_elements
+    settings.ignore_element_order = ignore_element_order
     twiroot = Twinode(actual.documentElement, expected.documentElement, settings)
 
     try:
@@ -82,10 +87,10 @@ class Twinode(object):
                 (self.path(), self.format_node(self.expected), self.format_node(self.actual))
         raise AssertionError(msg)
 
-    def path(self, slash_if_root=True):
+    def path(self, root_symbol='/'):
         if not self.parent:
-            return '/' if slash_if_root else ''
-        return '%s/%s' % (self.parent.path(slash_if_root=False), 
+            return root_symbol
+        return '%s/%s' % (self.parent.path(root_symbol=''), 
                           (self.actual or self.expected).parentNode.tagName)
 
     def format_node(self, node):
@@ -98,24 +103,33 @@ class Twinode(object):
         return repr(node)
 
     def arrange_children(self):
-        self.children = []
-
-        actual_child = self.actual.firstChild
-        expected_child = self.expected.firstChild
+        actual_children = self.actual.childNodes
+        expected_children = self.expected.childNodes
 
         expected_child_tags = [
             n.tagName for n in self.expected.childNodes
             if n.nodeType == xml.dom.Node.ELEMENT_NODE]
 
-        while actual_child or expected_child:
-            if self.settings.ignore_extra_elements and actual_child and \
-               actual_child.nodeType == xml.dom.Node.ELEMENT_NODE  and \
-               actual_child.tagName not in expected_child_tags:
-                    actual_child = actual_child.nextSibling
-                    continue
-            self.children.append(Twinode(actual_child, expected_child, settings=self.settings, parent=self))
+        if self.settings.ignore_extra_elements:
+            actual_children = [c for c in actual_children 
+                               if c.nodeType != xml.dom.Node.ELEMENT_NODE or 
+                               c.tagName in expected_child_tags]
 
-            if actual_child:
-                actual_child = actual_child.nextSibling
-            if expected_child:
-                expected_child = expected_child.nextSibling
+        if self.settings.ignore_element_order:
+            key = lambda node: node.tagName if node.nodeType == xml.dom.Node.ELEMENT_NODE else '!text'
+            actual_children = sorted(actual_children, key=key)
+            expected_children = sorted(expected_children, key=key)
+
+        self.children = map(self.create_child, izip_longest(actual_children, expected_children))
+
+    def create_child(self, pair):
+        actual, expected = pair
+        return Twinode(actual, expected, settings=self.settings, parent=self)
+
+    def are_equal(self, node1, node2):
+        try:
+            self.create_child((node1, node2)).assert_equal()
+        except AssertionError:
+            return False
+        else:
+            return True

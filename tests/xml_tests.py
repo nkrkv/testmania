@@ -1,21 +1,16 @@
 # -*- coding: utf-8; -*-
 
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
-
-from nose.tools import assert_equal
+from testmania.pep8 import assert_equal, assert_raises, assert_raises_regexp, assert_in
 from testmania.xml import assert_xml_equal
 
 
-class TestXmlAssert(TestCase):
+class TestXmlAssert(object):
     def test_trivial(self):
         xml = "<root></root>"
         assert_xml_equal(xml, xml)
 
     def test_trivial_inequal(self):
-        with self.assertRaisesRegexp(AssertionError, "at / expected <bar> element, got <foo>"):
+        with assert_raises_regexp(AssertionError, "at / expected <bar> element, got <foo>"):
             assert_xml_equal("<foo></foo>", "<bar></bar>")
 
     def test_nested(self):
@@ -43,10 +38,10 @@ class TestXmlAssert(TestCase):
         </root>
         """.strip()
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn("at /root expected <bar> element, got nothing", str(e.exception))
+        assert_in("at /root expected <bar> element, got nothing", str(e.exception))
 
     def test_lack_of_element(self):
         xml1 = """
@@ -62,10 +57,10 @@ class TestXmlAssert(TestCase):
         </root>
         """.strip()
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn("at /root expected nothing, got <bar> element", str(e.exception))
+        assert_in("at /root expected nothing, got <bar> element", str(e.exception))
 
     def test_text(self):
         xml1 = """
@@ -97,10 +92,10 @@ class TestXmlAssert(TestCase):
         </root>
         """.strip()
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn('at /root/foo expected "Privet", got "Hello"', str(e.exception))
+        assert_in('at /root/foo expected "Privet", got "Hello"', str(e.exception))
 
     def test_ignore_extra_elements(self):
         xml1 = """
@@ -117,7 +112,7 @@ class TestXmlAssert(TestCase):
         """.strip()
 
         assert_xml_equal(xml1, xml2, ignore_extra_elements=True)
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml2, xml1, ignore_extra_elements=True)
 
     def test_ignore_element_order(self):
@@ -174,28 +169,28 @@ class TestXmlAssert(TestCase):
         xml1 = '<root foo="bar"/>'
         xml2 = '<root foo="qux"/>'
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn('at /root@foo expected "qux", got "bar"', str(e.exception))
+        assert_in('at /root@foo expected "qux", got "bar"', str(e.exception))
 
     def test_attr_missed(self):
         xml1 = '<root />'
         xml2 = '<root foo="" />'
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn('at /root@foo expected "", got nothing', str(e.exception))
+        assert_in('at /root@foo expected "", got nothing', str(e.exception))
 
     def test_extra_attr(self):
         xml1 = '<root foo="bar" />'
         xml2 = '<root />'
 
-        with self.assertRaises(AssertionError) as e:
+        with assert_raises(AssertionError) as e:
             assert_xml_equal(xml1, xml2)
 
-        self.assertIn('at /root@foo expected nothing, got "bar"', str(e.exception))
+        assert_in('at /root@foo expected nothing, got "bar"', str(e.exception))
 
     def test_extra_attr_ok(self):
         xml1 = '<root foo="bar" />'

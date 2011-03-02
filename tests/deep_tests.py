@@ -1,21 +1,16 @@
 # -*- coding: utf-8; -*-
 
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
-
-from nose.tools import assert_equal
+from testmania.pep8 import assert_equal, assert_raises, assert_raises_regexp
 from testmania.deep import assert_deep_equal
 
 
-class TestDeepAssert(TestCase):
+class TestDeepAssert(object):
     def test_primitive(self):
         assert_deep_equal(123, 123)
         assert_deep_equal('foo', 'foo')
 
     def test_primitive_inequal(self):
-        with self.assertRaises(AssertionError):
+        with assert_raises(AssertionError):
             assert_deep_equal(123, 0)
 
     def test_dict(self):
@@ -36,7 +31,7 @@ class TestDeepAssert(TestCase):
             'baz': 'qux',
         }
 
-        with self.assertRaisesRegexp(AssertionError, "at /foo, left has value 'bar', right has value 'hello'"):
+        with assert_raises_regexp(AssertionError, "at /foo, left has value 'bar', right has value 'hello'"):
             assert_deep_equal(d1, d2)
 
     def test_dict_inequal_extra_keys(self):
@@ -49,7 +44,7 @@ class TestDeepAssert(TestCase):
             'foo': 'bar',
         }
 
-        with self.assertRaisesRegexp(AssertionError, u"at /, left has extra keys \['baz'\]"):
+        with assert_raises_regexp(AssertionError, u"at /, left has extra keys \['baz'\]"):
             assert_deep_equal(d1, d2)
 
     def test_dict_inequal_lack_of_key(self):
@@ -62,7 +57,7 @@ class TestDeepAssert(TestCase):
             'baz': 'qux',
         }
 
-        with self.assertRaisesRegexp(AssertionError, u"at /, right has extra keys \['baz'\]"):
+        with assert_raises_regexp(AssertionError, u"at /, right has extra keys \['baz'\]"):
             assert_deep_equal(d1, d2)
 
     def test_partial_dict_match(self):
@@ -105,5 +100,5 @@ class TestDeepAssert(TestCase):
             'baz': [0, 1, {'aww': 'uwl'}, 2],
         }
 
-        with self.assertRaisesRegexp(AssertionError, u"at /baz.2.aww, left has value 'owl', right has value 'uwl'"):
+        with assert_raises_regexp(AssertionError, u"at /baz.2.aww, left has value 'owl', right has value 'uwl'"):
             assert_deep_equal(d1, d2)

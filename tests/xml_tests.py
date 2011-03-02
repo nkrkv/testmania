@@ -163,3 +163,42 @@ class TestXmlAssert(TestCase):
 
         assert_xml_equal(xml1, xml2, ignore_list_order=True)
         assert_xml_equal(xml2, xml1, ignore_list_order=True)
+
+    def test_attributes_equal(self):
+        xml1 = '<root foo="bar" baz="qux" />'
+        xml2 = '<root baz="qux" foo="bar" />'
+        assert_xml_equal(xml1, xml2)
+        assert_xml_equal(xml2, xml1)
+
+    def test_attributes_inequal(self):
+        xml1 = '<root foo="bar"/>'
+        xml2 = '<root foo="qux"/>'
+
+        with self.assertRaises(AssertionError) as e:
+            assert_xml_equal(xml1, xml2)
+
+        self.assertIn('at /root@foo expected "qux", got "bar"', str(e.exception))
+
+    def test_attr_missed(self):
+        xml1 = '<root />'
+        xml2 = '<root foo="" />'
+
+        with self.assertRaises(AssertionError) as e:
+            assert_xml_equal(xml1, xml2)
+
+        self.assertIn('at /root@foo expected "", got nothing', str(e.exception))
+
+    def test_extra_attr(self):
+        xml1 = '<root foo="bar" />'
+        xml2 = '<root />'
+
+        with self.assertRaises(AssertionError) as e:
+            assert_xml_equal(xml1, xml2)
+
+        self.assertIn('at /root@foo expected nothing, got "bar"', str(e.exception))
+
+    def test_extra_attr_ok(self):
+        xml1 = '<root foo="bar" />'
+        xml2 = '<root />'
+
+        assert_xml_equal(xml1, xml2, ignore_extra_attrs=True)

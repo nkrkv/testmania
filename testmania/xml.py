@@ -10,7 +10,8 @@ def assert_xml_equal(actual, expected, msg=None,
                      ignore_whitespace=True, 
                      ignore_extra_elements=False,
                      ignore_element_order=False,
-                     ignore_list_order=False):
+                     ignore_list_order=False,
+                     ignore_extra_attrs=False):
 
     actual = xml.dom.minidom.parseString(actual)
     expected = xml.dom.minidom.parseString(expected)
@@ -23,6 +24,7 @@ def assert_xml_equal(actual, expected, msg=None,
     settings.ignore_extra_elements = ignore_extra_elements
     settings.ignore_element_order = ignore_element_order
     settings.ignore_list_order = ignore_list_order
+    settings.ignore_extra_attrs = ignore_extra_attrs
     twiroot = Twinode(actual.documentElement, expected.documentElement, settings)
 
     try:
@@ -83,9 +85,26 @@ class Twinode(object):
         if self.actual.tagName != self.expected.tagName:
             self._raise()
 
+        for key, value in self.actual.attributes.items():
+            try:
+                if self.expected.attributes[key].value != value:
+                    self._raise_attr(key)
+            except KeyError:
+                if not self.settings.ignore_extra_attrs:
+                    self._raise_attr(key)
+
+        for key in self.expected.attributes.keys():
+            if not self.actual.hasAttribute(key):
+                self._raise_attr(key)
+
     def _raise(self):
         msg = "at %s expected %s, got %s" % \
                 (self.path(), self.format_node(self.expected), self.format_node(self.actual))
+        raise AssertionError(msg)
+
+    def _raise_attr(self, attr):
+        msg = "at %s expected %s, got %s" % \
+                (self.path_to_attr(attr), self.format_attr(self.expected, attr), self.format_attr(self.actual, attr))
         raise AssertionError(msg)
 
     def path(self, root_symbol='/'):
@@ -93,6 +112,9 @@ class Twinode(object):
             return root_symbol
         return '%s/%s' % (self.parent.path(root_symbol=''), 
                           (self.actual or self.expected).parentNode.tagName)
+
+    def path_to_attr(self, attr):
+        return '%s/%s@%s' % (self.path(root_symbol=''), self.actual.tagName, attr)
 
     def format_node(self, node):
         if node is None:
@@ -102,6 +124,12 @@ class Twinode(object):
         if node.nodeType == xml.dom.Node.ELEMENT_NODE:
             return '<%s> element' % node.tagName
         return repr(node)
+    
+    def format_attr(self, node, attr):
+        try:
+            return '"%s"' % node.attributes[attr].value
+        except KeyError:
+            return 'nothing'
 
     def arrange_children(self):
         actual_children = self.actual.childNodes

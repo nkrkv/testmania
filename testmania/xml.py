@@ -2,15 +2,15 @@
 
 from __future__ import absolute_import
 
-from itertools import izip_longest
-
+import itertools
 import xml.dom.minidom
 
 
 def assert_xml_equal(actual, expected, msg=None, 
                      ignore_whitespace=True, 
                      ignore_extra_elements=False,
-                     ignore_element_order=False):
+                     ignore_element_order=False,
+                     ignore_list_order=False):
 
     actual = xml.dom.minidom.parseString(actual)
     expected = xml.dom.minidom.parseString(expected)
@@ -22,6 +22,7 @@ def assert_xml_equal(actual, expected, msg=None,
     settings = Settings()
     settings.ignore_extra_elements = ignore_extra_elements
     settings.ignore_element_order = ignore_element_order
+    settings.ignore_list_order = ignore_list_order
     twiroot = Twinode(actual.documentElement, expected.documentElement, settings)
 
     try:
@@ -115,20 +116,42 @@ class Twinode(object):
                                if c.nodeType != xml.dom.Node.ELEMENT_NODE or 
                                c.tagName in expected_child_tags]
 
-        if self.settings.ignore_element_order:
-            key = lambda node: node.tagName if node.nodeType == xml.dom.Node.ELEMENT_NODE else '!text'
-            actual_children = sorted(actual_children, key=key)
-            expected_children = sorted(expected_children, key=key)
+        tag_key = lambda node: node.tagName if node.nodeType == xml.dom.Node.ELEMENT_NODE else '!text'
 
-        self.children = map(self.create_child, izip_longest(actual_children, expected_children))
+        if self.settings.ignore_element_order:
+            actual_children = sorted(actual_children, key=tag_key)
+            expected_children = sorted(expected_children, key=tag_key)
+
+        if self.settings.ignore_list_order:
+            actual_children_groups = itertools.groupby(actual_children, key=tag_key)
+            expected_children_groups = itertools.groupby(expected_children, key=tag_key)
+            group_pairs = itertools.izip_longest(actual_children_groups, expected_children_groups)
+            actual_children = []
+            expected_children = []
+            for (actual_tag, actual_nodes), (expected_tag, expected_nodes) in group_pairs:
+                if actual_tag != expected_tag or actual_tag == '!text':
+                    actual_children.extend(actual_nodes)
+                    expected_children.extend(expected_nodes)
+                    continue
+                # we've got two element lists: actual_nodes and expected_nodes
+                # check all combinations and add those that match at the beginning
+                matches = filter(self.are_equal, itertools.product(actual_nodes, expected_nodes))
+                actual_matched = [n for n, _ in matches]
+                expected_matched = [n for _, n in matches]
+                actual_not_matched = [n for n in actual_nodes if n not in actual_matched]
+                expected_not_matched = [n for n in expected_nodes if n not in expected_matched]
+                actual_children.extend(actual_matched + actual_not_matched)
+                expected_children.extend(expected_matched + expected_not_matched)
+
+        self.children = map(self.create_child, itertools.izip_longest(actual_children, expected_children))
 
     def create_child(self, pair):
         actual, expected = pair
         return Twinode(actual, expected, settings=self.settings, parent=self)
 
-    def are_equal(self, node1, node2):
+    def are_equal(self, pair):
         try:
-            self.create_child((node1, node2)).assert_equal()
+            self.create_child(pair).assert_equal()
         except AssertionError:
             return False
         else:

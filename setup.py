@@ -23,10 +23,10 @@ setup(
     install_requires=install_requires,
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: MIT License"
-        "Intended Audience :: Developers"
-        "Operating System :: OS Independent"
-        "Programming Language :: Python"
-        "Topic :: Software Development :: Testing"
+        "License :: OSI Approved :: MIT License",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Testing",
     ],
 )

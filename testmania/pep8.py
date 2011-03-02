@@ -1,5 +1,20 @@
 # -*- coding: utf-8; -*-
 
+"""
+Module exposes ``TestCase.assert*`` methods as plain functions with corresponding
+names in ``pep8_naming_fashion``.
+
+>>> from testmania.pep8 import assert_almost_equal    
+>>> assert_almost_equal(0.7, 0.71)
+
+All assertions of Python 2.7+ :py:mod:`unittest` are exposed even if you're on
+Python 2.6 or lower. In that case they are taken from 
+`unittest2 <http://pypi.python.org/pypi/unittest2/>`_ backport.
+
+For full list of functions and their docs refer official documentation.
+
+"""
+
 import sys
 import re
 

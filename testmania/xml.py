@@ -12,6 +12,24 @@ def assert_xml_equal(actual, expected, msg=None,
                      ignore_element_order=False,
                      ignore_list_order=False,
                      ignore_extra_attrs=False):
+    """Test that two XMLs are equivalent.
+
+    Provides detailed message if they don't match.
+
+    `actual` and `expected` should be strings with xmls to test.
+
+    :param ignore_whitespace: whether insignificant whitespace should be ignored
+    :param ignore_extra_elements: whether `actual` is allowed to have extra elements
+        with tag names not present in `expected` on same level. Set to `True` if you're
+        just testing presence of necessary elements.
+    :param ignore_element_order: controls whether order of elements with distinct
+        tag names is important on a level.
+    :param ignore_list_order: controls whether order of elements with same
+        tag names is important on a level. Set to `True` if recurring elements
+        represent sets, not lists in your XML.
+    :param ignore_extra_attrs: whether `actual` is allowed to have element attributes
+        that aren't present in `expected`.
+    """
 
     actual = xml.dom.minidom.parseString(actual)
     expected = xml.dom.minidom.parseString(expected)

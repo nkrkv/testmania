@@ -7,6 +7,56 @@ from UserList import UserList
 
 
 def assert_deep_equal(obj1, obj2, message=None, partial_dict_match=False):
+    """Test for equality two deeply nested data structures of simple 
+    types like dicts or lists.
+
+    Provides readable message if they don't match with path containing 
+    found difference.
+
+    .. testsetup:: *
+    
+        from testmania.deep import assert_deep_equal
+
+    .. doctest::
+
+        >>> obj1 = {
+        ...    'foo': 1,
+        ...    'bar': [
+        ...         {'baz': 'qux'},
+        ...         {'bam': 'qix', 'tee': 'uup'},
+        ...    ],
+        ...    'wee': 3,
+        ... }
+
+        >>> obj2 = {
+        ...    'foo': 1,
+        ...    'bar': [
+        ...         {'baz': 'qux'},
+        ...         {'bam': 'qix', 'tee': 'uop'},
+        ...    ],
+        ...    'wee': 3,
+        ... }
+
+        >>> assert_deep_equal(obj1, obj2)
+        Traceback (most recent call last):
+            ...
+        AssertionError: 
+        ---------- Left ----------
+        {'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uup'}], 'foo': 1, 'wee': 3}
+        ---------- Right ---------
+        {'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uop'}], 'foo': 1, 'wee': 3}
+        <BLANKLINE>
+        at /bar.1.tee, left has value 'uup', right has value 'uop'
+
+    Objects to compare may be arbitrary nested structures of lists, dicts,
+    :py:class:`~UserDict.UserDict`, :py:class:`~UserList.UserList` or inherited
+    of thereof such as :py:class:`~collections.defaultdict` or custom user data types.
+
+    If `partial_dict_match=True`, dicts in `obj1` are allowed to be a superset of
+    corresponding dicts in `obj2` at any level, e.g. to have extra keys. This is
+    handy in cases when it is important to test whether at least necessary items
+    are present in a data structure.
+    """
     try:
         _assert_deep_equal(obj1, obj2, [], partial_dict_match=partial_dict_match)
     except AssertionError, e:

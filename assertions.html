@@ -1,0 +1,179 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Additional assertion functions &mdash; testmania v0.3.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="testmania v0.3.0 documentation" href="index.html" />
+    <link rel="prev" title="testmania.pep8" href="pep8.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pep8.html" title="testmania.pep8"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">testmania v0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="additional-assertion-functions">
+<h1>Additional assertion functions<a class="headerlink" href="#additional-assertion-functions" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="testmania.deep.assert_deep_equal">
+<tt class="descclassname">testmania.deep.</tt><tt class="descname">assert_deep_equal</tt><big>(</big><em>obj1</em>, <em>obj2</em>, <em>message=None</em>, <em>partial_dict_match=False</em><big>)</big><a class="headerlink" href="#testmania.deep.assert_deep_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test for equality two deeply nested data structures of simple 
+types like dicts or lists.</p>
+<p>Provides readable message if they don&#8217;t match with path containing 
+found difference.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; obj1 = {
+...    'foo': 1,
+...    'bar': [
+...         {'baz': 'qux'},
+...         {'bam': 'qix', 'tee': 'uup'},
+...    ],
+...    'wee': 3,
+... }
+
+&gt;&gt;&gt; obj2 = {
+...    'foo': 1,
+...    'bar': [
+...         {'baz': 'qux'},
+...         {'bam': 'qix', 'tee': 'uop'},
+...    ],
+...    'wee': 3,
+... }
+
+&gt;&gt;&gt; assert_deep_equal(obj1, obj2)
+Traceback (most recent call last):
+    ...
+AssertionError: 
+---------- Left ----------
+{'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uup'}], 'foo': 1, 'wee': 3}
+---------- Right ---------
+{'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uop'}], 'foo': 1, 'wee': 3}
+
+at /bar.1.tee, left has value 'uup', right has value 'uop'</pre>
+</div>
+<p>Objects to compare may be arbitrary nested structures of lists, dicts,
+<a class="reference external" href="http://docs.python.org/library/userdict.html#UserDict.UserDict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">UserDict</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/userdict.html#UserList.UserList" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">UserList</span></tt></a> or inherited
+of thereof such as <a class="reference external" href="http://docs.python.org/library/collections.html#collections.defaultdict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">defaultdict</span></tt></a> or custom user data types.</p>
+<p>If <cite>partial_dict_match=True</cite>, dicts in <cite>obj1</cite> are allowed to be a superset of
+corresponding dicts in <cite>obj2</cite> at any level, e.g. to have extra keys. This is
+handy in cases when it is important to test whether at least necessary items
+are present in a data structure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="testmania.xml.assert_xml_equal">
+<tt class="descclassname">testmania.xml.</tt><tt class="descname">assert_xml_equal</tt><big>(</big><em>actual</em>, <em>expected</em>, <em>msg=None</em>, <em>ignore_whitespace=True</em>, <em>ignore_extra_elements=False</em>, <em>ignore_element_order=False</em>, <em>ignore_list_order=False</em>, <em>ignore_extra_attrs=False</em><big>)</big><a class="headerlink" href="#testmania.xml.assert_xml_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that two XMLs are equivalent.</p>
+<p>Provides detailed message if they don&#8217;t match.</p>
+<p><cite>actual</cite> and <cite>expected</cite> should be strings with xmls to test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ignore_whitespace</strong> &#8211; whether insignificant whitespace should be ignored</li>
+<li><strong>ignore_extra_elements</strong> &#8211; whether <cite>actual</cite> is allowed to have extra elements
+with tag names not present in <cite>expected</cite> on same level. Set to <cite>True</cite> if you&#8217;re
+just testing presence of necessary elements.</li>
+<li><strong>ignore_element_order</strong> &#8211; controls whether order of elements with distinct
+tag names is important on a level.</li>
+<li><strong>ignore_list_order</strong> &#8211; controls whether order of elements with same
+tag names is important on a level. Set to <cite>True</cite> if recurring elements
+represent sets, not lists in your XML.</li>
+<li><strong>ignore_extra_attrs</strong> &#8211; whether <cite>actual</cite> is allowed to have element attributes
+that aren&#8217;t present in <cite>expected</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pep8.html"
+                        title="previous chapter">testmania.pep8</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/assertions.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pep8.html" title="testmania.pep8"
+             >previous</a> |</li>
+        <li><a href="index.html">testmania v0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Victor Nakoryakov (aka nailxx).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

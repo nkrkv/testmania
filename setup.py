@@ -3,8 +3,10 @@
 
 import sys
 import os.path
+sys.path.insert(0, os.path.dirname(__file__))
 
 from setuptools import setup
+
 from testmania import __version__
 
 install_requires = []

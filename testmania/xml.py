@@ -49,9 +49,9 @@ def assert_xml_equal(actual, expected, msg=None,
         twiroot.assert_equal()
     except AssertionError, e:
         if not msg:
-            msg = "\nExpected:\n%s\n\nActual:\n%s\n%s" % \
+            msg = u"\nExpected:\n%s\n\nActual:\n%s\n%s" % \
                     (expected.toprettyxml(), actual.toprettyxml(), e)
-        raise AssertionError(msg)
+        raise AssertionError(msg.encode('utf-8'))
 
 
 def _strip_whitespace(node):

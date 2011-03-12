@@ -55,10 +55,12 @@ def assert_xml_equal(actual, expected, msg=None,
 
 
 def _strip_whitespace(node):
-    for n in node.childNodes:
-        if n.nodeType == xml.dom.Node.TEXT_NODE and not n.data.strip():
-            node.removeChild(n)
-            n.unlink()
+    for n in node.childNodes[:]:
+        if n.nodeType == xml.dom.Node.TEXT_NODE:
+            n.data = n.data.strip()
+            if not n.data:
+                node.removeChild(n)
+                n.unlink()
         elif n.nodeType == xml.dom.Node.ELEMENT_NODE:
             _strip_whitespace(n)
 

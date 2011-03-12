@@ -24,6 +24,31 @@ class TestXmlAssert(object):
         """.strip()
         assert_xml_equal(xml, xml)
 
+    def test_ignore_whitespace(self):
+        xml1 = """
+        <root>
+            <foo>
+                Hello
+            </foo>
+            <bar>
+                <baz>
+                    <qux/>
+                </baz>
+            </bar>
+        </root>
+        """.strip()
+
+        xml2 = """
+        <root>
+          <foo>Hello</foo>
+          <bar>
+            <baz><qux/></baz>
+          </bar>
+        </root>
+        """.strip()
+
+        assert_xml_equal(xml1, xml2)
+
     def test_extra_element(self):
         xml1 = """
         <root>

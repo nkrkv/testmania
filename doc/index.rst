@@ -37,3 +37,18 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+Changelog
+=========
+
+* 0.3.8
+
+  * added ``assert_just_now``
+  * fixed whitespace and unicode issues in ``assert_xml_equal``
+
+* 0.3.7
+
+  * fixes in setup process
+
+* 0.3.0
+
+  * initial release

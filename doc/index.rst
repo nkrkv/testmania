@@ -29,6 +29,7 @@ Contents:
 
    pep8
    assertions
+   expect
 
 Indices and tables
 ==================
@@ -42,6 +43,7 @@ Changelog
 
 * 0.3.8
 
+  * added expectation objects
   * added ``assert_just_now``
   * fixed whitespace and unicode issues in ``assert_xml_equal``
 

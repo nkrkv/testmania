@@ -25,7 +25,7 @@ Find the project on github: https://github.com/nailxx/testmania
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    pep8
    assertions

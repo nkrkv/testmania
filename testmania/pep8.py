@@ -5,7 +5,7 @@ Module exposes ``TestCase.assert*`` methods as plain functions with correspondin
 names in ``pep8_naming_fashion``.
 
 >>> from testmania.pep8 import assert_almost_equal    
->>> assert_almost_equal(0.7, 0.71)
+>>> assert_almost_equal(0.7, 0.701, places=2)
 
 All assertions of Python 2.7+ :py:mod:`unittest` are exposed even if you're on
 Python 2.6 or lower. In that case they are taken from 

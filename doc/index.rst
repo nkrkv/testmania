@@ -43,6 +43,7 @@ Changelog
 
 * 0.3.8
 
+  * all identifiers now could be imported from root ``testmania`` package
   * added expectation objects
   * added ``assert_just_now``
   * fixed whitespace and unicode issues in ``assert_xml_equal``

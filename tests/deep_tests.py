@@ -31,7 +31,7 @@ class TestDeepAssert(object):
             'baz': 'qux',
         }
 
-        with assert_raises_regexp(AssertionError, "at /foo, left has value 'bar', right has value 'hello'"):
+        with assert_raises_regexp(AssertionError, "at /foo, expected 'hello', got 'bar'"):
             assert_deep_equal(d1, d2)
 
     def test_dict_inequal_extra_keys(self):
@@ -44,7 +44,7 @@ class TestDeepAssert(object):
             'foo': 'bar',
         }
 
-        with assert_raises_regexp(AssertionError, u"at /, left has extra keys \['baz'\]"):
+        with assert_raises_regexp(AssertionError, ur"at /, actual got unexpected keys \['baz'\]"):
             assert_deep_equal(d1, d2)
 
     def test_dict_inequal_lack_of_key(self):
@@ -57,7 +57,7 @@ class TestDeepAssert(object):
             'baz': 'qux',
         }
 
-        with assert_raises_regexp(AssertionError, u"at /, right has extra keys \['baz'\]"):
+        with assert_raises_regexp(AssertionError, ur"at /, expected keys \['baz'\] are absent in actual"):
             assert_deep_equal(d1, d2)
 
     def test_partial_dict_match(self):
@@ -70,7 +70,7 @@ class TestDeepAssert(object):
             'foo': 'bar',
         }
 
-        assert_deep_equal(d1, d2, partial_dict_match=True)
+        assert_deep_equal(d1, d2, ignore_extra_keys=True)
 
     def test_nested(self):
         d = {
@@ -100,5 +100,5 @@ class TestDeepAssert(object):
             'baz': [0, 1, {'aww': 'uwl'}, 2],
         }
 
-        with assert_raises_regexp(AssertionError, u"at /baz.2.aww, left has value 'owl', right has value 'uwl'"):
+        with assert_raises_regexp(AssertionError, u"at /baz.2.aww, expected 'uwl', got 'owl'"):
             assert_deep_equal(d1, d2)

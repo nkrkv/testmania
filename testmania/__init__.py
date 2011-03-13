@@ -1,5 +1,5 @@
 
-__version__ = "0.3.8"
+__version__ = "0.4.0"
 
 from testmania.pep8 import *
 from testmania.deep import assert_deep_equal

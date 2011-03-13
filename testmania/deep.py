@@ -6,67 +6,70 @@ from UserDict import UserDict
 from UserList import UserList
 
 
-def assert_deep_equal(obj1, obj2, message=None, partial_dict_match=False):
+def assert_deep_equal(actual, expected, msg=None, ignore_extra_keys=False):
     """Test for equality two deeply nested data structures of simple 
     types like dicts or lists.
 
     Provides readable message if they don't match with path containing 
     found difference.
 
-    .. testsetup:: *
-    
-        from testmania.deep import assert_deep_equal
+    .. testcode::
 
-    .. doctest::
+        from testmania import assert_deep_equal
+        
+        actual = {
+           'foo': 1,
+           'bar': [
+                {'baz': 'qux'},
+                {'bam': 'qix', 'tee': 'uup'},
+           ],
+           'wee': 3,
+        }
+        
+        expected = {
+           'foo': 1,
+           'bar': [
+                {'baz': 'qux'},
+                {'bam': 'qix', 'tee': 'uop'},
+           ],
+           'wee': 3,
+        }
 
-        >>> obj1 = {
-        ...    'foo': 1,
-        ...    'bar': [
-        ...         {'baz': 'qux'},
-        ...         {'bam': 'qix', 'tee': 'uup'},
-        ...    ],
-        ...    'wee': 3,
-        ... }
+        assert_deep_equal(actual, expected)
 
-        >>> obj2 = {
-        ...    'foo': 1,
-        ...    'bar': [
-        ...         {'baz': 'qux'},
-        ...         {'bam': 'qix', 'tee': 'uop'},
-        ...    ],
-        ...    'wee': 3,
-        ... }
+    raises
 
-        >>> assert_deep_equal(obj1, obj2)
+    .. testoutput::
+
         Traceback (most recent call last):
             ...
         AssertionError: 
-        ---------- Left ----------
-        {'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uup'}], 'foo': 1, 'wee': 3}
-        ---------- Right ---------
+        -------------------------------- Expected -----------------------------------
         {'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uop'}], 'foo': 1, 'wee': 3}
-        <BLANKLINE>
-        at /bar.1.tee, left has value 'uup', right has value 'uop'
+        --------------------------------- Actual ------------------------------------
+        {'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uup'}], 'foo': 1, 'wee': 3}
+
+        at /bar.1.tee, expected 'uop', got 'uup'
 
     Objects to compare may be arbitrary nested structures of lists, dicts,
     :py:class:`~UserDict.UserDict`, :py:class:`~UserList.UserList` or inherited
     of thereof such as :py:class:`~collections.defaultdict` or custom user data types.
 
-    If `partial_dict_match=True`, dicts in `obj1` are allowed to be a superset of
-    corresponding dicts in `obj2` at any level, e.g. to have extra keys. This is
+    If `ignore_extra_keys=True`, dicts in `actual` are allowed to be a superset of
+    corresponding dicts in `expected` at any level, e.g. to have extra keys. This is
     handy in cases when it is important to test whether at least necessary items
     are present in a data structure.
     """
     try:
-        _assert_deep_equal(obj1, obj2, [], partial_dict_match=partial_dict_match)
+        _assert_deep_equal(actual, expected, [], ignore_extra_keys=ignore_extra_keys)
     except AssertionError, e:
-        if not message:
-            message = "\n---------- Left ----------\n"
-            message += _format(obj1)
-            message += "\n---------- Right ---------\n"
-            message += _format(obj2)
-            message += "\n\n" + str(e)
-        raise AssertionError(message)
+        if not msg:
+            msg = "\n-------------------------------- Expected -----------------------------------\n"
+            msg += _format(expected)
+            msg += "\n--------------------------------- Actual ------------------------------------\n"
+            msg += _format(actual)
+            msg += "\n\n" + str(e)
+        raise AssertionError(msg)
 
 
 def _format(obj):
@@ -92,36 +95,36 @@ def _simplify(x):
     return result
 
 
-def _assert_deep_equal(obj1, obj2, path, partial_dict_match):
+def _assert_deep_equal(actual, expected, path, ignore_extra_keys):
     path_str = '/' + '.'.join(map(str, path))
-    if isinstance(obj1, (dict, UserDict)) and isinstance(obj2, (dict, UserDict)):
-        obj1_keys = set(obj1.keys())
-        obj2_keys = set(obj2.keys())
-        obj1_key_extra = obj1_keys - obj2_keys
-        if obj1_key_extra and not partial_dict_match:
-            msg = "at %s, left has extra keys %s" % (path_str, list(obj1_key_extra))
+    if isinstance(actual, (dict, UserDict)) and isinstance(expected, (dict, UserDict)):
+        actual_keys = set(actual.keys())
+        expected_keys = set(expected.keys())
+        actual_key_extra = actual_keys - expected_keys
+        if actual_key_extra and not ignore_extra_keys:
+            msg = "at %s, actual got unexpected keys %s" % (path_str, list(actual_key_extra))
             raise AssertionError(msg)
 
-        obj2_key_extra = obj2_keys - obj1_keys
-        if obj2_key_extra:
-            msg = "at %s, right has extra keys %s" % (path_str, list(obj2_key_extra))
+        expected_key_extra = expected_keys - actual_keys
+        if expected_key_extra:
+            msg = "at %s, expected keys %s are absent in actual" % (path_str, list(expected_key_extra))
             raise AssertionError(msg)
 
-        for key in obj2_keys:
-            _assert_deep_equal(obj1[key], obj2[key], path + [key], partial_dict_match)
+        for key in expected_keys:
+            _assert_deep_equal(actual[key], expected[key], path + [key], ignore_extra_keys)
 
-    elif isinstance(obj1, (list, UserList)) and isinstance(obj2, (list, UserList)) or \
-            isinstance(obj1, tuple) and isinstance(obj2, tuple):
-        obj1_len = len(obj1)
-        obj2_len = len(obj2)
-        if obj1_len != obj2_len:
+    elif isinstance(actual, (list, UserList)) and isinstance(expected, (list, UserList)) or \
+            isinstance(actual, tuple) and isinstance(expected, tuple):
+        actual_len = len(actual)
+        expected_len = len(expected)
+        if actual_len != expected_len:
             raise AssertionError(
-                "at % s, left has length %s, right has length %s" %
-                (path_str, obj1_len, obj2_len))
-        for i in xrange(obj1_len):
-            _assert_deep_equal(obj1[i], obj2[i], path + [i], partial_dict_match)
+                "at % s, expected length is %s, actual length is %s" %
+                (path_str, expected_len, actual_len))
+        for i in xrange(actual_len):
+            _assert_deep_equal(actual[i], expected[i], path + [i], ignore_extra_keys)
     else:
-        if obj1 != obj2:
+        if actual != expected:
             raise AssertionError(
-                "at % s, left has value %r, right has value %r" %
-                (path_str, obj1, obj2))
+                "at % s, expected %r, got %r" %
+                (path_str, expected, actual))

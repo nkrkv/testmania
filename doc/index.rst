@@ -41,6 +41,11 @@ Indices and tables
 Changelog
 =========
 
+* 0.4.0
+
+  * ``assert_deep_equal`` equal now have naming and failure messages consistent with others, 
+    including `partial_dict_match` was renamed to `ignore_extra_keys`.
+
 * 0.3.8
 
   * all identifiers now could be imported from root ``testmania`` package

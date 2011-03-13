@@ -58,6 +58,10 @@ class Expectation(object):
     Defines an object that holds an expectation about a value of the object
     that will be compared to it.
     """
+
+    # make datetime-compatible
+    timetuple = None
+
     def __init__(self, assertion, *args, **kwargs):
         """
         :param assertion: assertion function or bound method to use to test expectation;
@@ -89,3 +93,6 @@ class Expectation(object):
             return False
         else:
             return True
+
+    def __ne__(self, other):
+        return not (self == other)

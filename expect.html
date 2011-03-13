@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Expectation objects &mdash; testmania v0.4.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="testmania v0.4.0 documentation" href="index.html" />
+    <link rel="prev" title="Additional assertion functions" href="assertions.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="assertions.html" title="Additional assertion functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">testmania v0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-testmania.expect">
+<span id="expectation-objects"></span><h1>Expectation objects<a class="headerlink" href="#module-testmania.expect" title="Permalink to this headline">¶</a></h1>
+<p><cite>Expectation</cite> is a special object that could be used to simplify
+testing of composite values. It resepresents not concrete value,
+but an expectation expressed in terms of assertion functions.</p>
+<p>It is better to illustrate it with an example. Consider you have
+a function that returns set of blog post comments and your test
+looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_fetch_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">)</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="p">[{</span>
+        <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span><span class="p">,</span>
+        <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">,</span>
+        <span class="s">&#39;visibility&#39;</span><span class="p">:</span> <span class="s">&#39;public&#39;</span><span class="p">,</span>
+    <span class="p">}])</span>
+</pre></div>
+</div>
+<p>Now you decide to add <tt class="docutils literal"><span class="pre">created_at</span></tt> field to the comment structure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_fetch_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">)</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="p">[{</span>
+        <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span><span class="p">,</span>
+        <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">,</span>
+        <span class="s">&#39;visibility&#39;</span><span class="p">:</span> <span class="s">&#39;public&#39;</span><span class="p">,</span>
+        <span class="s">&#39;created_at&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="p">}])</span>
+</pre></div>
+</div>
+<p>But this will fail from time to time since <cite>now</cite> when a comment is posted
+and <cite>now</cite> when the comment is tested could differ a bit. It will be nice
+to use <a class="reference internal" href="assertions.html#testmania.time.assert_just_now" title="testmania.time.assert_just_now"><tt class="xref py py-meth docutils literal"><span class="pre">assert_just_now()</span></tt></a> to test timestamp but to
+leave test structure intact. Here <cite>Expectation</cite> object comes into play:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">testmania</span> <span class="kn">import</span> <span class="n">assert_just_now</span><span class="p">,</span> <span class="n">Expectation</span> <span class="k">as</span> <span class="n">e</span>
+
+<span class="k">def</span> <span class="nf">test_fetch_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">)</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="p">[{</span>
+        <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span><span class="p">,</span>
+        <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="s">&quot;Oh, that&#39;s great&quot;</span><span class="p">,</span>
+        <span class="s">&#39;visibility&#39;</span><span class="p">:</span> <span class="s">&#39;public&#39;</span><span class="p">,</span>
+        <span class="s">&#39;created_at&#39;</span><span class="p">:</span> <span class="n">e</span><span class="p">(</span><span class="n">assert_just_now</span><span class="p">),</span>
+    <span class="p">}])</span>
+</pre></div>
+</div>
+<p>Expectation tests value using an assertion function provided. It passes
+if assertion is ok and fails with meaningful message that includes assertion
+failure text.</p>
+<div class="section" id="classes-and-functions">
+<h2>Classes and functions<a class="headerlink" href="#classes-and-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="testmania.expect.Expectation">
+<em class="property">class </em><tt class="descclassname">testmania.expect.</tt><tt class="descname">Expectation</tt><big>(</big><em>assertion</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#testmania.expect.Expectation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines an object that holds an expectation about a value of the object
+that will be compared to it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to Python operator precedence rules, <cite>Expectation</cite> could be used only
+to test against types that don&#8217;t define their own <tt class="docutils literal"><span class="pre">__eq__</span></tt>. As a special
+case testing against <a class="reference external" href="http://docs.python.org/library/datetime.html#datetime.datetime" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">datetime</span></tt></a> is allowed.</p>
+</div>
+<dl class="method">
+<dt id="testmania.expect.Expectation.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>assertion</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#testmania.expect.Expectation.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>assertion</strong> &#8211; assertion function or bound method to use to test expectation;
+choice is not limited to assertions from <cite>testmania</cite> package, it could be any
+function that takes tested value as first positional argument and raises
+<tt class="docutils literal"><span class="pre">AssertionError</span></tt> on test failure.</li>
+<li><strong>args</strong> &#8211; passed to <cite>assertion</cite> as-is after tested value argument.</li>
+<li><strong>kwargs</strong> &#8211; passed to <cite>assertion</cite> as-is.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Expectation objects</a><ul>
+<li><a class="reference internal" href="#classes-and-functions">Classes and functions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="assertions.html"
+                        title="previous chapter">Additional assertion functions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/expect.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="assertions.html" title="Additional assertion functions"
+             >previous</a> |</li>
+        <li><a href="index.html">testmania v0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Victor Nakoryakov (aka nailxx).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

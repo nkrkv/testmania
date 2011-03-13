@@ -25,10 +25,11 @@ Find the project on github: https://github.com/nailxx/testmania
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    pep8
    assertions
+   expect
 
 Indices and tables
 ==================
@@ -37,3 +38,25 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+Changelog
+=========
+
+* 0.4.0
+
+  * ``assert_deep_equal`` equal now have naming and failure messages consistent with others, 
+    including `partial_dict_match` was renamed to `ignore_extra_keys`.
+
+* 0.3.8
+
+  * all identifiers now could be imported from root ``testmania`` package
+  * added expectation objects
+  * added ``assert_just_now``
+  * fixed whitespace and unicode issues in ``assert_xml_equal``
+
+* 0.3.7
+
+  * fixes in setup process
+
+* 0.3.0
+
+  * initial release

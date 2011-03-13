@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Additional assertion functions &mdash; testmania v0.3.2 documentation</title>
+    <title>Additional assertion functions &mdash; testmania v0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.2',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="testmania v0.3.2 documentation" href="index.html" />
+    <link rel="top" title="testmania v0.4.0 documentation" href="index.html" />
+    <link rel="next" title="Expectation objects" href="expect.html" />
     <link rel="prev" title="testmania.pep8" href="pep8.html" /> 
   </head>
   <body>
@@ -36,9 +37,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="expect.html" title="Expectation objects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
           <a href="pep8.html" title="testmania.pep8"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">testmania v0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">testmania v0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -51,45 +55,51 @@
 <h1>Additional assertion functions<a class="headerlink" href="#additional-assertion-functions" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="testmania.deep.assert_deep_equal">
-<tt class="descclassname">testmania.deep.</tt><tt class="descname">assert_deep_equal</tt><big>(</big><em>obj1</em>, <em>obj2</em>, <em>message=None</em>, <em>partial_dict_match=False</em><big>)</big><a class="headerlink" href="#testmania.deep.assert_deep_equal" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">testmania.deep.</tt><tt class="descname">assert_deep_equal</tt><big>(</big><em>actual</em>, <em>expected</em>, <em>msg=None</em>, <em>ignore_extra_keys=False</em><big>)</big><a class="headerlink" href="#testmania.deep.assert_deep_equal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test for equality two deeply nested data structures of simple 
 types like dicts or lists.</p>
 <p>Provides readable message if they don&#8217;t match with path containing 
 found difference.</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; obj1 = {
-...    'foo': 1,
-...    'bar': [
-...         {'baz': 'qux'},
-...         {'bam': 'qix', 'tee': 'uup'},
-...    ],
-...    'wee': 3,
-... }
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">testmania</span> <span class="kn">import</span> <span class="n">assert_deep_equal</span>
 
-&gt;&gt;&gt; obj2 = {
-...    'foo': 1,
-...    'bar': [
-...         {'baz': 'qux'},
-...         {'bam': 'qix', 'tee': 'uop'},
-...    ],
-...    'wee': 3,
-... }
+<span class="n">actual</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+   <span class="s">&#39;bar&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&#39;baz&#39;</span><span class="p">:</span> <span class="s">&#39;qux&#39;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&#39;bam&#39;</span><span class="p">:</span> <span class="s">&#39;qix&#39;</span><span class="p">,</span> <span class="s">&#39;tee&#39;</span><span class="p">:</span> <span class="s">&#39;uup&#39;</span><span class="p">},</span>
+   <span class="p">],</span>
+   <span class="s">&#39;wee&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">}</span>
 
-&gt;&gt;&gt; assert_deep_equal(obj1, obj2)
-Traceback (most recent call last):
+<span class="n">expected</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+   <span class="s">&#39;bar&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&#39;baz&#39;</span><span class="p">:</span> <span class="s">&#39;qux&#39;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&#39;bam&#39;</span><span class="p">:</span> <span class="s">&#39;qix&#39;</span><span class="p">,</span> <span class="s">&#39;tee&#39;</span><span class="p">:</span> <span class="s">&#39;uop&#39;</span><span class="p">},</span>
+   <span class="p">],</span>
+   <span class="s">&#39;wee&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">assert_deep_equal</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>raises</p>
+<div class="highlight-none"><div class="highlight"><pre>Traceback (most recent call last):
     ...
 AssertionError: 
----------- Left ----------
-{'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uup'}], 'foo': 1, 'wee': 3}
----------- Right ---------
-{'bar': [{'baz': 'qux'}, {'bam': 'qix', 'tee': 'uop'}], 'foo': 1, 'wee': 3}
+-------------------------------- Expected -----------------------------------
+{&#39;bar&#39;: [{&#39;baz&#39;: &#39;qux&#39;}, {&#39;bam&#39;: &#39;qix&#39;, &#39;tee&#39;: &#39;uop&#39;}], &#39;foo&#39;: 1, &#39;wee&#39;: 3}
+--------------------------------- Actual ------------------------------------
+{&#39;bar&#39;: [{&#39;baz&#39;: &#39;qux&#39;}, {&#39;bam&#39;: &#39;qix&#39;, &#39;tee&#39;: &#39;uup&#39;}], &#39;foo&#39;: 1, &#39;wee&#39;: 3}
 
-at /bar.1.tee, left has value 'uup', right has value 'uop'</pre>
+at /bar.1.tee, expected &#39;uop&#39;, got &#39;uup&#39;
+</pre></div>
 </div>
 <p>Objects to compare may be arbitrary nested structures of lists, dicts,
 <a class="reference external" href="http://docs.python.org/library/userdict.html#UserDict.UserDict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">UserDict</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/userdict.html#UserList.UserList" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">UserList</span></tt></a> or inherited
 of thereof such as <a class="reference external" href="http://docs.python.org/library/collections.html#collections.defaultdict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">defaultdict</span></tt></a> or custom user data types.</p>
-<p>If <cite>partial_dict_match=True</cite>, dicts in <cite>obj1</cite> are allowed to be a superset of
-corresponding dicts in <cite>obj2</cite> at any level, e.g. to have extra keys. This is
+<p>If <cite>ignore_extra_keys=True</cite>, dicts in <cite>actual</cite> are allowed to be a superset of
+corresponding dicts in <cite>expected</cite> at any level, e.g. to have extra keys. This is
 handy in cases when it is important to test whether at least necessary items
 are present in a data structure.</p>
 </dd></dl>
@@ -123,6 +133,26 @@ that aren&#8217;t present in <cite>expected</cite>.</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="testmania.time.assert_just_now">
+<tt class="descclassname">testmania.time.</tt><tt class="descname">assert_just_now</tt><big>(</big><em>time_value</em>, <em>msg=None</em>, <em>tolerance=1</em><big>)</big><a class="headerlink" href="#testmania.time.assert_just_now" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether <cite>time_value</cite> represents almost current moment.
+It&#8217;s handy to test timestamp values like <tt class="docutils literal"><span class="pre">created_at</span></tt> or <tt class="docutils literal"><span class="pre">updated_at</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time_value</strong> &#8211; should be a <a class="reference external" href="http://docs.python.org/library/datetime.html#datetime.datetime" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">datetime</span></tt></a> object.</li>
+<li><strong>tolerance</strong> (<em>int|float</em>) &#8211; specifies acceptable deviation
+of <cite>time_value</cite> in seconds.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -134,6 +164,9 @@ that aren&#8217;t present in <cite>expected</cite>.</li>
   <h4>Previous topic</h4>
   <p class="topless"><a href="pep8.html"
                         title="previous chapter">testmania.pep8</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="expect.html"
+                        title="next chapter">Expectation objects</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/assertions.txt"
@@ -166,9 +199,12 @@ that aren&#8217;t present in <cite>expected</cite>.</li>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="expect.html" title="Expectation objects"
+             >next</a> |</li>
+        <li class="right" >
           <a href="pep8.html" title="testmania.pep8"
              >previous</a> |</li>
-        <li><a href="index.html">testmania v0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">testmania v0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

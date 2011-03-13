@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Testmania 0.3 documnetation &mdash; testmania v0.3.2 documentation</title>
+    <title>Testmania 0.4 documnetation &mdash; testmania v0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.2',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="testmania v0.3.2 documentation" href="#" />
+    <link rel="top" title="testmania v0.4.0 documentation" href="#" />
     <link rel="next" title="testmania.pep8" href="pep8.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="pep8.html" title="testmania.pep8"
              accesskey="N">next</a> |</li>
-        <li><a href="#">testmania v0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="#">testmania v0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,7 +48,7 @@
           <div class="body">
             
   <div class="section" id="testmania-version-documnetation">
-<h1>Testmania 0.3 documnetation<a class="headerlink" href="#testmania-version-documnetation" title="Permalink to this headline">¶</a></h1>
+<h1>Testmania 0.4 documnetation<a class="headerlink" href="#testmania-version-documnetation" title="Permalink to this headline">¶</a></h1>
 <p>Testmania is a library that complements standard <a class="reference external" href="http://docs.python.org/library/unittest.html#module-unittest" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">unittest</span></tt></a> module
 with few convenient assert functions. Such as for comparing deeply nested simple data
 structures or xmls.</p>
@@ -70,6 +70,7 @@ is used to test testmania itself and it is not installed by default.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pep8.html">testmania.pep8</a></li>
 <li class="toctree-l1"><a class="reference internal" href="assertions.html">Additional assertion functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expect.html">Expectation objects</a></li>
 </ul>
 </div>
 </div>
@@ -81,6 +82,31 @@ is used to test testmania itself and it is not installed by default.</p>
 <li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
+<div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>0.4.0<ul>
+<li><tt class="docutils literal"><span class="pre">assert_deep_equal</span></tt> equal now have naming and failure messages consistent with others,
+including <cite>partial_dict_match</cite> was renamed to <cite>ignore_extra_keys</cite>.</li>
+</ul>
+</li>
+<li>0.3.8<ul>
+<li>all identifiers now could be imported from root <tt class="docutils literal"><span class="pre">testmania</span></tt> package</li>
+<li>added expectation objects</li>
+<li>added <tt class="docutils literal"><span class="pre">assert_just_now</span></tt></li>
+<li>fixed whitespace and unicode issues in <tt class="docutils literal"><span class="pre">assert_xml_equal</span></tt></li>
+</ul>
+</li>
+<li>0.3.7<ul>
+<li>fixes in setup process</li>
+</ul>
+</li>
+<li>0.3.0<ul>
+<li>initial release</li>
+</ul>
+</li>
+</ul>
+</div>
 
 
           </div>
@@ -90,10 +116,11 @@ is used to test testmania itself and it is not installed by default.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Testmania 0.3 documnetation</a><ul>
+<li><a class="reference internal" href="#">Testmania 0.4 documnetation</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#changelog">Changelog</a></li>
 </ul>
 
   <h4>Next topic</h4>
@@ -133,7 +160,7 @@ is used to test testmania itself and it is not installed by default.</p>
         <li class="right" >
           <a href="pep8.html" title="testmania.pep8"
              >next</a> |</li>
-        <li><a href="#">testmania v0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="#">testmania v0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -35,8 +35,7 @@ and `now` when the comment is tested could differ a bit. It will be nice
 to use :meth:`~testmania.time.assert_just_now` to test timestamp but to
 leave test structure intact. Here `Expectation` object comes into play:: 
 
-    from testmania.time import assert_just_now
-    from testmania.expect import Expectation as e
+    from testmania import assert_just_now, Expectation as e
 
     def test_fetch_comments(self):
         self.comments.post('John', "Oh, that's great")
@@ -57,6 +56,12 @@ class Expectation(object):
     """
     Defines an object that holds an expectation about a value of the object
     that will be compared to it.
+
+    .. note::
+
+        Due to Python operator precedence rules, `Expectation` could be used only
+        to test against types that don't define their own ``__eq__``. As a special
+        case testing against :py:class:`~datetime.datetime` is allowed.
     """
 
     # make datetime-compatible
